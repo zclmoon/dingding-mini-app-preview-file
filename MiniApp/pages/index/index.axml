@@ -1,7 +1,7 @@
 <view>
-  <button type="primary" class="button-cls" onTap="onUploadFile">
+  <!-- <button type="primary" class="button-cls" onTap="onUploadFile">
   上传文档
-  </button>
+  </button> -->
   <button type="primary" class="button-cls" onTap="onPreviewFile">
   查看文档
   </button>

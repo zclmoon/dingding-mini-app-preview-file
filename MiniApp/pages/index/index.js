@@ -16,7 +16,7 @@ Page({
     // 页面隐藏
   },
   onUnload() {
-    
+
     // 页面被关闭
   },
   onTitleClick() {
@@ -24,6 +24,7 @@ Page({
   },
   onPullDownRefresh() {
     // 页面被下拉
+
   },
   onReachBottom() {
     // 页面被拉到底部
@@ -40,21 +41,21 @@ Page({
   onUploadFile() {
     console.log("开始上传文件");
 
-    let spaceId = "4662107042";
-    dd.uploadAttachmentToDingTalk({
-                            image:{multiple:true,compress:false,max:9,spaceId: spaceId},
-                            space:{spaceId:spaceId,isCopy:1 , max:9},
-                            file: {spaceId:spaceId,max:1},
-                            types:["photo","camera","file","space"],
-                            success: (ures) => {
-                              console.log(ures);
-                            },
-                            fail: (err) =>{
-                                dd.alert({
-                                    content:JSON.stringify(err)
-                                })
-                            }
-                        });
+    // let spaceId = "4662107042";
+    // dd.uploadAttachmentToDingTalk({
+    //                         image:{multiple:true,compress:false,max:9,spaceId: spaceId},
+    //                         space:{spaceId:spaceId,isCopy:1 , max:9},
+    //                         file: {spaceId:spaceId,max:1},
+    //                         types:["photo","camera","file","space"],
+    //                         success: (ures) => {
+    //                           console.log(ures);
+    //                         },
+    //                         fail: (err) =>{
+    //                             dd.alert({
+    //                                 content:JSON.stringify(err)
+    //                             })
+    //                         }
+    //                     });
 
 
     // dd.getAuthCode({
@@ -91,5 +92,15 @@ Page({
   },
   onPreviewFile() {
     console.log("开始预览上传的文件");
+
+    dd.previewFileInDingTalk({
+        corpId:dd.corpId,
+        spaceId:"4662107042",
+        fileId:"33988180072",
+        fileName:"test.pdf",
+        fileSize:1024,
+        fileType:"pdf",
+
+    })
   }
 });

@@ -83,7 +83,7 @@ public class TestController {
     }
 
     @PostMapping("/GetAndAuthSpace")
-    public DingPanSpaceInfo GetAndAuthCusDingSpace(@RequestBody DingPanSpaceRequest request) {
+    public DingPanSpaceInfo GetAndAuthCusDingSpace() {
         DingPanSpaceInfo result = new DingPanSpaceInfo();
 
         // 获取access token
@@ -193,9 +193,7 @@ public class TestController {
 
     // https://developers.dingtalk.com/document/app/authorize-a-user-to-access-a-custom-workspace-of-an
     private void authUserAccessCustomizeSpace(String accessToken) {
-
         // userId放在配置文件
-
         try {
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/cspace/grant_custom_space");
             OapiCspaceGrantCustomSpaceRequest req = new OapiCspaceGrantCustomSpaceRequest();
@@ -210,18 +208,6 @@ public class TestController {
             OapiCspaceGrantCustomSpaceResponse rsp = client.execute(req, accessToken);
             System.out.println("grant cusotm space result: " + rsp.getBody());
 
-        } catch (Exception ex){
-
-        }
-
-        try {
-            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/cspace/get_custom_space");
-            OapiCspaceGetCustomSpaceRequest req = new OapiCspaceGetCustomSpaceRequest();
-            req.setDomain(domain);
-            req.setAgentId(agentId);
-            req.setHttpMethod("GET");
-            OapiCspaceGetCustomSpaceResponse rsp = client.execute(req, accessToken);
-            System.out.println("get custom space result: " + rsp.getBody());
         } catch (Exception ex){
 
         }
