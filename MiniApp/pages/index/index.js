@@ -1,3 +1,6 @@
+import { apiRequest } from "../../common/apiRequest";
+import {GET_AND_AUTH_CUS_SPACE} from "../../common/config";
+
 Page({
   onLoad(query) {
     // 页面加载
@@ -13,6 +16,7 @@ Page({
     // 页面隐藏
   },
   onUnload() {
+    
     // 页面被关闭
   },
   onTitleClick() {
@@ -27,9 +31,65 @@ Page({
   onShareAppMessage() {
     // 返回自定义分享信息
     return {
-      title: 'My App',
+      title: '预览文件Demo',
       desc: 'My App description',
       path: 'pages/index/index',
     };
   },
+
+  onUploadFile() {
+    console.log("开始上传文件");
+
+    let spaceId = "4662107042";
+    dd.uploadAttachmentToDingTalk({
+                            image:{multiple:true,compress:false,max:9,spaceId: spaceId},
+                            space:{spaceId:spaceId,isCopy:1 , max:9},
+                            file: {spaceId:spaceId,max:1},
+                            types:["photo","camera","file","space"],
+                            success: (ures) => {
+                              console.log(ures);
+                            },
+                            fail: (err) =>{
+                                dd.alert({
+                                    content:JSON.stringify(err)
+                                })
+                            }
+                        });
+
+
+    // dd.getAuthCode({
+    //     success:function(res){
+    //         const {authCode} = res;
+
+    //             apiRequest("POST", GET_AND_AUTH_CUS_SPACE, JSON.stringify({authCode:authCode}))
+    //               .then(apiRes => {
+
+    //                   console.log(apiRes);
+
+    //                   const {spaceId} = apiRes;
+
+    //                   dd.uploadAttachmentToDingTalk({
+    //                         image:{multiple:true,compress:false,max:9,spaceId: spaceId},
+    //                         space:{spaceId:spaceId,isCopy:1 , max:9},
+    //                         file: {spaceId:spaceId,max:1},
+    //                         types:["photo","camera","file","space"],
+    //                         success: (ures) => {
+    //                           console.log(ures);
+    //                         },
+    //                         fail: (err) =>{
+    //                             dd.alert({
+    //                                 content:JSON.stringify(err)
+    //                             })
+    //                         }
+    //                     })
+    //               });
+    //     },
+    //     fail:function(err){
+    //     }
+    // });
+
+  },
+  onPreviewFile() {
+    console.log("开始预览上传的文件");
+  }
 });

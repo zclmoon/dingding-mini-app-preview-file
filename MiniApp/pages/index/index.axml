@@ -1,3 +1,8 @@
 <view>
-  this is a blank page
+  <button type="primary" class="button-cls" onTap="onUploadFile">
+  上传文档
+  </button>
+  <button type="primary" class="button-cls" onTap="onPreviewFile">
+  查看文档
+  </button>
 </view>

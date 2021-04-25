@@ -2,6 +2,8 @@ package com.codercms.DingDingMiniAppViewFileDemo.Controllers;
 
 import com.alibaba.fastjson.JSON;
 import com.codercms.DingDingMiniAppViewFileDemo.Models.DingPanFileInfo;
+import com.codercms.DingDingMiniAppViewFileDemo.Models.DingPanSpaceInfo;
+import com.codercms.DingDingMiniAppViewFileDemo.Models.DingPanSpaceRequest;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
@@ -10,6 +12,7 @@ import com.taobao.api.FileItem;
 import com.taobao.api.internal.util.WebUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,13 +69,31 @@ public class TestController {
         result.spaceId = getDingPanSpaceId(accessToken);
 
         // 上传文件并获得media id
-        String mediaId = uploadFileAndGetMediaId(file, accessToken);
+         result.mediaId = uploadFileAndGetMediaId(file, accessToken);
 
         // 授权用户访问企业的自定义空间
+        // 注意： 这个方法里 不能 使用authCode获取userId；因为前段传过来的authCode只能用一次，如果用了，接下来的转存API就没法调用了。
+        //  解决办法是：把userId配置在配置文件中，因为userId是不变的。
         authUserAccessCustomizeSpace(accessToken);
 
         // 转存上传的文件到自定义空间，并获取fileId
-        result.fileId = saveToCSAndGetFileId(authCode, mediaId, result.spaceId, fileName, accessToken);
+        result.fileId = saveToCSAndGetFileId(authCode, result.mediaId, result.spaceId, fileName, accessToken);
+
+        return result;
+    }
+
+    @PostMapping("/GetAndAuthSpace")
+    public DingPanSpaceInfo GetAndAuthCusDingSpace(@RequestBody DingPanSpaceRequest request) {
+        DingPanSpaceInfo result = new DingPanSpaceInfo();
+
+        // 获取access token
+        String accessToken = getAccessToken();
+
+        // 获取space id
+        result.spaceId = getDingPanSpaceId(accessToken);
+
+        // 授权用户访问企业的自定义空间
+        authUserAccessCustomizeSpace(accessToken);
 
         return result;
     }
@@ -152,9 +173,29 @@ public class TestController {
         return mediaId;
     }
 
-    // https://developers.dingtalk.com/document/app/authorize-a-user-to-access-a-custom-workspace-of-an
     // 通过免登码获取用户信息、userId: https://developers.dingtalk.com/document/app/obtain-the-userid-of-a-user-by-using-the-log-free
+    private String getUserId(String authCode, String accessToken){
+        String userId = "";
+        try {
+            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getuserinfo");
+            OapiUserGetuserinfoRequest req = new OapiUserGetuserinfoRequest();
+            req.setCode(authCode);
+            req.setHttpMethod("GET");
+            OapiUserGetuserinfoResponse rsp = client.execute(req, accessToken);
+            System.out.println(rsp.getBody());
+            userId = rsp.getUserid();
+        } catch (Exception ex) {
+
+        }
+
+        return userId;
+    }
+
+    // https://developers.dingtalk.com/document/app/authorize-a-user-to-access-a-custom-workspace-of-an
     private void authUserAccessCustomizeSpace(String accessToken) {
+
+        // userId放在配置文件
+
         try {
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/cspace/grant_custom_space");
             OapiCspaceGrantCustomSpaceRequest req = new OapiCspaceGrantCustomSpaceRequest();
@@ -167,8 +208,20 @@ public class TestController {
             req.setDuration(30L);
             req.setHttpMethod("GET");
             OapiCspaceGrantCustomSpaceResponse rsp = client.execute(req, accessToken);
-            System.out.println(rsp.getBody());
+            System.out.println("grant cusotm space result: " + rsp.getBody());
 
+        } catch (Exception ex){
+
+        }
+
+        try {
+            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/cspace/get_custom_space");
+            OapiCspaceGetCustomSpaceRequest req = new OapiCspaceGetCustomSpaceRequest();
+            req.setDomain(domain);
+            req.setAgentId(agentId);
+            req.setHttpMethod("GET");
+            OapiCspaceGetCustomSpaceResponse rsp = client.execute(req, accessToken);
+            System.out.println("get custom space result: " + rsp.getBody());
         } catch (Exception ex){
 
         }
