@@ -153,7 +153,7 @@ public class TestController {
     }
 
     // https://developers.dingtalk.com/document/app/authorize-a-user-to-access-a-custom-workspace-of-an
-    // 通过免登码获取用户信息, userId: https://developers.dingtalk.com/document/app/obtain-the-userid-of-a-user-by-using-the-log-free
+    // 通过免登码获取用户信息、userId: https://developers.dingtalk.com/document/app/obtain-the-userid-of-a-user-by-using-the-log-free
     private void authUserAccessCustomizeSpace(String accessToken) {
         try {
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/cspace/grant_custom_space");
